@@ -19,7 +19,6 @@ export class PackageFetchTasksService {
 
   @Cron('45 * * * * *')
   async fetchPackageCron() {
-    const dateStarted = Date.now();
     this.logger.debug('Called when the current second is 45');
     const { data } = await this.httpService.axiosRef.get(
       'https://api.alteos.com/v1/referral-partners/ui/configuration/shop',
@@ -29,8 +28,6 @@ export class PackageFetchTasksService {
         },
       },
     );
-    console.log(data);
-    const dateRequested = Date.now();
 
     const garantie = data.configuration.productConfigs.find(
       (obj: { key: string }) => obj.key === 'garantie',
@@ -75,17 +72,12 @@ export class PackageFetchTasksService {
           });
         }),
     );
-    const dateFinished = Date.now();
 
-    console.log('request time', dateRequested - dateStarted);
-    console.log('process time', dateFinished - dateRequested);
-    console.log(rawPackages.length);
-    const deletedResult = await this.packageModel.deleteMany({
+    await this.packageModel.deleteMany({
       packageId: { $nin: filterObject },
       provider: 'Alteos',
     });
-    console.log('delete result', deletedResult);
-    const result = await this.packageModel.bulkWrite(
+    await this.packageModel.bulkWrite(
       rawPackages.map((packageObj, i) => {
         return {
           updateOne: {
@@ -98,10 +90,5 @@ export class PackageFetchTasksService {
         };
       }),
     );
-    const dateUpserted = Date.now();
-    console.log('upsert time', dateUpserted - dateFinished);
-    console.log('total time', dateFinished - dateStarted);
-
-    console.log('upsert result', result);
   }
 }
