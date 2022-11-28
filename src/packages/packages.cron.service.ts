@@ -17,9 +17,9 @@ export class PackageFetchTasksService {
     // this.fetchPackageCron();
   }
 
-  @Cron('45 * * * * *')
+  @Cron('0 0 * * * *')
   async fetchPackageCron() {
-    this.logger.debug('Called when the current second is 45');
+    this.logger.debug('Fetching Alteos Packages');
     const { data } = await this.httpService.axiosRef.get(
       'https://api.alteos.com/v1/referral-partners/ui/configuration/shop',
       {
