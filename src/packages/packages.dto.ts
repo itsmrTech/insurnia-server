@@ -4,8 +4,13 @@ export class FindPackagesByProductDto {
   cartItems: CartItem[];
 }
 class CartItem {
-  asnid: string;
+  asin: string;
+  url: string;
   price: Price;
+  @IsNumber()
+  @Min(1)
+  qty: number;
+  title: string;
 }
 
 class Price {

@@ -5,7 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { Package, PackageDocument } from './packages.schema';
 import { ConfigService } from '@nestjs/config';
-
+import * as _ from 'lodash';
 @Injectable()
 export class PackageFetchTasksService {
   private readonly logger = new Logger(PackageFetchTasksService.name);
@@ -13,9 +13,7 @@ export class PackageFetchTasksService {
     private readonly httpService: HttpService,
     @InjectModel(Package.name) private packageModel: Model<PackageDocument>,
     private configService: ConfigService,
-  ) {
-    // this.fetchPackageCron();
-  }
+  ) {}
 
   @Cron('0 0 * * * *')
   async fetchPackageCron() {
@@ -41,6 +39,7 @@ export class PackageFetchTasksService {
       months: any;
     }[] = [];
     const filterObject: any[] = [];
+    const onlyCats: string[] = [];
 
     garantie.forms[0].fields[1].dependentOptions.map(
       (option: { values: any[]; key: any }) =>
@@ -59,13 +58,19 @@ export class PackageFetchTasksService {
               category: option.key,
               subcategory: value.key,
               provider: 'Alteos',
-              url: `https://shop.alteos.com/garantie/quote?category=${option.key}&subcategory=${value.key}&priceRange=${price.key}`,
+              url: `https://shop.alteos.com/garantie/quote?category=${encodeURIComponent(
+                option.key,
+              )}&subcategory=${encodeURIComponent(
+                value.key,
+              )}&priceRange=${encodeURIComponent(price.key)}`,
               priceRange: {
                 range,
                 currency: 'eur',
               },
               months,
             };
+            onlyCats.push(packageObj.category);
+            onlyCats.push(packageObj.subcategory);
 
             filterObject.push(packageId);
             rawPackages.push(packageObj);

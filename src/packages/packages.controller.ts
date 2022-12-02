@@ -6,8 +6,11 @@ import { PackagesService } from './packages.service';
 export class PackagesController {
   constructor(private readonly packagesService: PackagesService) {}
   @Get()
-  findPackagesByProducts(@Query() query: FindPackagesByProductDto) {
-    const packages = this.packagesService.findPackagesByProducts(query);
+  async findPackagesByProducts(@Query() query: FindPackagesByProductDto) {
+    console.log(query.cartItems);
+    const packages = await this.packagesService.findPackagesByProducts({
+      cartItems: query.cartItems,
+    });
     return {
       packages,
     };

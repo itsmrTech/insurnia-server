@@ -15,7 +15,7 @@ class Price {
 @Schema()
 class Cost {
   @Prop()
-  range: number;
+  amount: number;
 
   @Prop()
   currency: string;
