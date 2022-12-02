@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+  insurnia-server:
+    build: .
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "on-failure"
+
